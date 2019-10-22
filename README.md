@@ -11,6 +11,11 @@ This script takes two parameters to run
 
 ## Yammer API
 POST: https://www.yammer.com/api/v1/tokens/deletion 
+This API will delete all the yammer bearer tokens for the users which provided in the post data "user_ids". 
+A curl command example to call this API:
+```
+curl -v -d '{"user_ids":[1,2,3]}' -H "Content-Type: application/json" -H "Authorization: Bearer <AAD_Token>" -X POST https://www.yammer.com/api/v1/tokens/deletion
+```
 
 ## Work Flow
 1. Get all the user ids from the csv file
