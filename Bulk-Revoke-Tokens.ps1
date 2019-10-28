@@ -1,6 +1,7 @@
 param (
   [Parameter(Mandatory=$true)][string]$CsvPath,
-  [Parameter(Mandatory=$true)][string]$BearerToken
+  [Parameter(Mandatory=$true)][string]$BearerToken,
+  [Parameter(Mandatory=$true)][string]$Is3rdPartyAppOnly
 )
 
 function RequestDeletion {
@@ -38,7 +39,7 @@ if ($CsvObj | Get-Member -Name $UserIdColName -MemberType NoteProperty)
 
       if ($Batch.Count -ge $BatchSize)
       {
-        $Json = ('{{"user_ids": [{0}]}}' -f ($Batch -join ","))
+        $Json = ('{{"user_ids": [{0}], "is_3rd_party_only": {1}}}' -f ($Batch -join ","), $Is3rdPartyAppOnly)
         RequestDeletion -Json $Json -BearerToken $BearerToken -Api $Api
         $Batch.Clear()
       }
@@ -46,13 +47,14 @@ if ($CsvObj | Get-Member -Name $UserIdColName -MemberType NoteProperty)
 
     if ($Batch.Count -gt 0)
     {
-      $Json = ('{{"user_ids": [{0}]}}' -f ($Batch -join ","))
+      $Json = ('{{"user_ids": [{0}], "is_3rd_party_only": {1}}}' -f ($Batch -join ","), $Is3rdPartyAppOnly)
       RequestDeletion -Json $Json -BearerToken $BearerToken -Api $Api
       $Batch.Clear()
     }
   }
 }
-else {
+else 
+{
   Write-Error ("Cannot find column {0} in file {1}" -f $UserIdColName, $CsvPath)
   exit 2
 }
